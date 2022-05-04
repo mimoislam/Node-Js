@@ -4,10 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket Thing1</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 </head>
+
 <body>
     Client1
-    <button onclick="sendMessage()">Send Msg</button>
+   <div id="server1">
+       <div>Ip Address</div>
+       <div>Status :</div>
+       <div id="status">Getting Data</div>
+
+       <button onclick="sendMessage()">Send Msg</button>
+
+   </div>
 </body>
 <script>
 
@@ -16,7 +26,20 @@
     console.log("connected To Ws Server");
     });
         socket.addEventListener("message",function(event){
-    console.log("MessageFrom server", event.data);
+      var data=JSON.parse(event.data)
+      var status=$("#server1").find( "#status" );
+
+      if(data.status==0){
+        status.text('this machine is working now please try out later')
+      }else {
+        if(data.status==1){
+        status.text('this machine is not working ')
+      }
+      }
+      console.log(data.status==1)
+
+
+
     });
     const sendMessage=()=>{
     socket.send("Hello from client 1");
