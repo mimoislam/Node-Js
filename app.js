@@ -2,8 +2,29 @@ const express = require('express')
 const app = express()
 const server = require('http').createServer(app);
 const WebSocket = require('ws');
+
+
 var shell=require("./shellFunction")
 var status_TYPE=require("./Status")
+const {default: simpleGit, CleanOptions} = require('simple-git');
+simpleGit().clean(CleanOptions.FORCE);
+
+
+console.log(process.cwd());
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const wss = new WebSocket.Server({ server:server });
 
@@ -17,7 +38,9 @@ wss.on('connection', function connection(ws) {
   ws.send(
     JSON.stringify({
       'status':status
-    }));
+    })
+    
+    );
   
   ws.on('close', function() {
 
