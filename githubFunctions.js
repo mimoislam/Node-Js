@@ -1,6 +1,3 @@
-var shellExec = require('shelljs');
-var status_TYPE=require("./Status");
-var status=require('./app');
 var createRepo = require( '@moyuyc/github-create-repo' );
 const git = require('simple-git')()
 
@@ -46,21 +43,5 @@ await git.clone(repoURL, localPath, options, handlerFn());
 
 
 
-
-
-async function shell(gitUrl){
-    gitClone(gitUrl)
-
-
-
-
-
-    status.status=status_TYPE.OCCUPIED
-    shellExec.exec('ansible-playbook -i hosts  ./AnsiblePlayBook/ansible-playbooks/apache_ubuntu1804/playbook.yml');
-    console.log("finished");
-    //status.status=status_TYPE.LIBRE
-    
-}
-
-/*ansible-playbook -i ../../../hosts playbook.yml*/
-module.exports.shell= shell
+module.exports.createRepositoryByName=createRepositoryByName;
+module.exports.gitClone=gitClone;

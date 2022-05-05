@@ -56,14 +56,14 @@ wss.on('connection', function connection(ws) {
   ws.on('message', function incoming(message) { 
     status=status_TYPE.OCCUPIED;
     
-    //shell.shell();
-    wss.clients.forEach(function each(client) {
+    shell.shell('https://github.com/mimoislam/gamma');
+    /* wss.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify({
           'status':status
         }));
       }
-    });
+    });*/
 
   });
 });
