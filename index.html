@@ -15,12 +15,11 @@
        <div>Status :</div>
        <div id="status">Getting Data</div>
 
-       <button onclick="sendMessage()">Send Msg</button>
 
    </div>
 </body>
 <script>
-
+/*
     const socket = new WebSocket("ws://localhost:3000/");
     socket.addEventListener("open",function(event){
     console.log("connected To Ws Server");
@@ -44,5 +43,32 @@
     const sendMessage=()=>{
     socket.send("Hello from client 1");
     }
+
+*/
+var source = new EventSource('http://localhost:3000/status');
+         /* source.addEventListener('open', function(e) {
+         document.getElementById('content').innerHTML += 'Connections to the server established..<br/>';
+         }, false);*/
+         source.onmessage = function(e) {
+           var data=JSON.parse(e.data).status
+
+           var status=$("#server1").find( "#status" );
+
+if(data==0){
+  status.text('this machine is working now please try out later')
+}else {
+  if(data==1){
+  status.text('this machine is not working ')
+}
+}
+
+
+
+         };
+         document.getElementById('stopButton').onclick=function(){
+           
+         }
+
+    
 </script>
 </html>
