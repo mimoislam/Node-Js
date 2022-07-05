@@ -14,25 +14,8 @@ var opts = {
 	'token': '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'
 };
 
-function createRepositoryByName(name){
-    createRepo( name, opts, clbk );
-
-}
 
 
-function clbk( error, repo, info ) {
-	// Check for rate limit information...
-	if ( info ) {
-		console.error( 'Limit: %d', info.limit );
-		console.error( 'Remaining: %d', info.remaining );
-		console.error( 'Reset: %s', (new Date( info.reset*1000 )).toISOString() );
-	}
-	if ( error ) {
-		throw new Error( error.message );
-	}
-	console.log( JSON.stringify( repo ) );
-	// returns <repo_data>
-}
 
 
 
@@ -87,19 +70,12 @@ function createHostFile(data,groupe_name){
 }
 
 
-async function shell(gitUrl){
-	groupe_name="linux"
+async function shell(gitUrl,user){
+	groupe_name="linux01"
 	data=[{
-		ip:'192.168.1.44',
+		ip:'192.168.1.49',
 		user:'kali',
 		password:'kali',
-		privilege:true,
-		become_user:'root',
-		become_password:'kali',
-	},{
-		ip:'192.168.1.1',
-		user:'kali2',
-		password:'kali2',
 		privilege:true,
 		become_user:'root',
 		become_password:'kali',
@@ -108,10 +84,16 @@ async function shell(gitUrl){
 
 
 	try {
-	  fs.writeFile('hosts', createHostFile(data,groupe_name),(err) => {
+	 await  fs.writeFile('hosts', createHostFile(data,groupe_name),(err) => {
 		if (err)
 			throw err;
+			
 		console.log('File saved!');
+
+		status.status=status_TYPE.OCCUPIED
+		 shellExec.exec('ansible-playbook -i hosts  AnsiblePlayBook/playBook.yaml');
+		console.log("finished");
+		status.status=status_TYPE.LIBRE
 	})	  // file written successfully
 	} catch (err) {
 	  console.error(err);
@@ -120,10 +102,7 @@ async function shell(gitUrl){
 
 
 
-    status.status=status_TYPE.OCCUPIED
-    shellExec.exec('ansible-playbook -i hosts  ./AnsiblePlayBook/ansible-playbooks/apache_ubuntu1804/playbook.yml');
-    console.log("finished");
-    //status.status=status_TYPE.LIBRE
+    //
     
 }
 
