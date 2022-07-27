@@ -23,7 +23,7 @@ app.get('/', (req, res) => res.send(req.body.key))
 app.post('/request',function(req, res) {
     console.log('receiving data ...');
     console.log('body is ',req.body);
-    shell.shell(req.body.githubUrl,req.body)
+    shell.shell(req.body)
     res.send(req.body);
 })
 

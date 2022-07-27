@@ -2,8 +2,10 @@ var shellExec = require('shelljs');
 var status_TYPE=require("./Status");
 var status=require('./app');
 var createRepo = require( '@moyuyc/github-create-repo' );
+var request = require('request');
 const git = require('simple-git')()
 const fs = require('fs');
+const { jsonp } = require('express/lib/response');
 
 
 
@@ -70,39 +72,95 @@ function createHostFile(data,groupe_name){
 }
 
 
-async function shell(gitUrl,user){
+async function shell(users){
+	let j = 0;
 	groupe_name="linux01"
-	data=[{
-		ip:'192.168.1.49',
-		user:'kali',
-		password:'kali',
-		privilege:true,
-		become_user:'root',
-		become_password:'kali',
-	}]
-    //gitClone(gitUrl)
+
+	while (j < users.length) {
+		var firstData=users[j];
+		data=[];
+
+		github = firstData.githubUrl;
+		auditServer = firstData.auditServer_id;
+	let i = 0;
+	while (i <Object.keys(firstData.data).length) {
+	
+data.push({
+	ip:(firstData.data)[i].ip,
+	 user:(firstData.data)[i].user,
+	 password:(firstData.data)[i].password,
+	 privilege:(firstData.data)[i].privilege,
+	 become_user:(firstData.data)[i].become_user,
+	 become_password:(firstData.data)[i].become_password,
+});
+	i++;
+
+}
+ 
+console.log('data1');
+
+	console.log(data);
+    // gitClone(github);
 
 
 	try {
-	 await  fs.writeFile('hosts', createHostFile(data,groupe_name),(err) => {
+	 await  fs.writeFile('hosts', createHostFile(data,groupe_name)
+	 ,(err) => {
 		if (err)
 			throw err;
 			
 		console.log('File saved!');
 
 		status.status=status_TYPE.OCCUPIED
-		 shellExec.exec('ansible-playbook -i hosts  AnsiblePlayBook/playBook.yaml');
+		  shellExec.exec('ansible-playbook -i hosts  AnsiblePlayBook/playBook.yaml');
+
 		console.log("finished");
 		status.status=status_TYPE.LIBRE
-	})	  // file written successfully
+		const fs = require('fs');
+
+ fs.readFile('AnsiblePlayBook/config.json', 'utf8', (err, data) => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  
+  request({
+    url: "http://127.0.0.1:8000/admin/test",
+    method: "POST",
+    json: true,   // <--Very important!!!
+    body: data
+}, function (error, response, body){
+	console.log('body.data');
+
+    console.log(body);
+});
+//   request.post(
+//     'http://www.yoursite.com/formpage',
+//     { json: { key: 'value' },data:{
+// 		result:data,
+// 		"auditServer_id":auditServer
+// 	} },
+
+//     function (error, response, body) {
+//         if (!error && response.statusCode == 200) {
+//             console.log(body);
+//         }
+//     }
+// );
+  console.log(data);
+  console.log(auditServer);
+});
+	}
+	)	  // file written successfully
 	} catch (err) {
 	  console.error(err);
 	}
 
 
+	j++;
 
-
-    //
+}
+    
     
 }
 
